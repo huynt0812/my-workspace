@@ -7,17 +7,6 @@ interface BackgroundProps {
 export function Background({ settings }: BackgroundProps) {
   const { type, url, opacity } = settings;
 
-  if (type === 'gradient') {
-    return (
-      <div
-        className="fixed inset-0 -z-10"
-        style={{
-          background: url || 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-        }}
-      />
-    );
-  }
-
   if (type === 'video') {
     return (
       <div className="fixed inset-0 -z-10">

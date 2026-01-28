@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { AppSettings } from './types';
 import { DEFAULT_SETTINGS } from './types';
@@ -6,8 +7,12 @@ import {
   BackgroundSettings,
   Clock,
   FocusTimer,
-  Notes,
+  Sidebar,
+  MusicPlayer,
+  AmbientSounds,
+  TaskList,
 } from './components';
+import type { PanelType } from './components';
 import './index.css';
 
 function App() {
@@ -15,6 +20,7 @@ function App() {
     'focus-workspace-settings',
     DEFAULT_SETTINGS
   );
+  const [activePanel, setActivePanel] = useState<PanelType>(null);
 
   const updateBackground = (background: AppSettings['background']) => {
     setSettings((prev) => ({ ...prev, background }));
@@ -24,41 +30,95 @@ function App() {
     setSettings((prev) => ({ ...prev, timer }));
   };
 
-  const updateNotes = (notes: AppSettings['notes']) => {
-    setSettings((prev) => ({ ...prev, notes }));
+  const updateMusic = (music: AppSettings['music']) => {
+    setSettings((prev) => ({ ...prev, music }));
   };
 
+  const updateAmbientSounds = (ambientSounds: AppSettings['ambientSounds']) => {
+    setSettings((prev) => ({ ...prev, ambientSounds }));
+  };
+
+  const updateTasks = (tasks: AppSettings['tasks']) => {
+    setSettings((prev) => ({ ...prev, tasks }));
+  };
+
+  const toggleSidebarCollapse = () => {
+    setSettings((prev) => ({ ...prev, sidebarCollapsed: !prev.sidebarCollapsed }));
+  };
+
+  const closePanel = () => setActivePanel(null);
+
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Background */}
       <Background settings={settings.background} />
 
-      {/* Main content */}
-      <div className="min-h-screen flex flex-col items-center justify-center p-8">
-        {/* Clock - center */}
-        <div className="mb-12">
+      {/* Sidebar */}
+      <Sidebar
+        activePanel={activePanel}
+        onPanelChange={setActivePanel}
+        isCollapsed={settings.sidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapse}
+      />
+
+      {/* Panel content - appears next to sidebar */}
+      {activePanel && (
+        <div className="fixed left-16 top-0 h-full flex items-center z-30 p-4">
+          {activePanel === 'music' && (
+            <MusicPlayer
+              settings={settings.music}
+              onSettingsChange={updateMusic}
+              onClose={closePanel}
+            />
+          )}
+          {activePanel === 'sounds' && (
+            <AmbientSounds
+              sounds={settings.ambientSounds}
+              onSoundsChange={updateAmbientSounds}
+              onClose={closePanel}
+            />
+          )}
+          {activePanel === 'timer' && (
+            <FocusTimer
+              settings={settings.timer}
+              onSettingsChange={updateTimer}
+              onClose={closePanel}
+            />
+          )}
+          {activePanel === 'tasks' && (
+            <TaskList
+              tasks={settings.tasks}
+              onTasksChange={updateTasks}
+              onClose={closePanel}
+            />
+          )}
+          {activePanel === 'background' && (
+            <BackgroundSettings
+              settings={settings.background}
+              onSettingsChange={updateBackground}
+              onClose={closePanel}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Main content - center */}
+      <div className="min-h-screen flex flex-col items-center justify-center p-8 ml-16">
+        {/* Clock */}
+        <div className="mb-8">
           <Clock />
         </div>
 
-        {/* Focus Timer - below clock */}
-        <FocusTimer settings={settings.timer} onSettingsChange={updateTimer} />
-      </div>
-
-      {/* Bottom left - Notes */}
-      <div className="fixed bottom-6 left-6">
-        <Notes notes={settings.notes} onNotesChange={updateNotes} />
-      </div>
-
-      {/* Bottom right - Background Settings */}
-      <div className="fixed bottom-6 right-6">
-        <BackgroundSettings
-          settings={settings.background}
-          onSettingsChange={updateBackground}
+        {/* Compact Timer */}
+        <FocusTimer
+          settings={settings.timer}
+          onSettingsChange={updateTimer}
+          compact
         />
       </div>
 
-      {/* App name watermark */}
-      <div className="fixed top-6 left-6 text-white/30 text-sm font-light select-none">
+      {/* Keyboard shortcut hint */}
+      <div className="fixed bottom-4 right-4 text-white/20 text-xs select-none">
         Focus Workspace
       </div>
     </div>

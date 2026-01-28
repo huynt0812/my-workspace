@@ -3,3 +3,8 @@ export { BackgroundSettings } from './BackgroundSettings';
 export { Clock } from './Clock';
 export { FocusTimer } from './FocusTimer';
 export { Notes } from './Notes';
+export { Sidebar } from './Sidebar';
+export type { PanelType } from './Sidebar';
+export { MusicPlayer } from './MusicPlayer';
+export { AmbientSounds } from './AmbientSounds';
+export { TaskList } from './TaskList';

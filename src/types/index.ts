@@ -94,37 +94,55 @@ export const DEFAULT_AMBIENT_SOUNDS: AmbientSound[] = [
   { id: 'birds', name: 'Chim', icon: '🐦', volume: 0.3, isActive: false },
 ];
 
-// Video backgrounds
+// Lofi/Anime style backgrounds
 export const DEFAULT_BACKGROUNDS = [
   {
-    name: 'Cozy Room',
-    url: 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=1920',
+    name: 'Cozy Bedroom',
+    url: 'https://w.wallhaven.cc/full/zy/wallhaven-zymgky.jpg',
     type: 'image' as const,
+    category: 'indoor',
   },
   {
-    name: 'Night City',
-    url: 'https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=1920',
+    name: 'Rooftop Sunset',
+    url: 'https://w.wallhaven.cc/full/pk/wallhaven-pkz5r9.png',
     type: 'image' as const,
+    category: 'outdoor',
   },
   {
     name: 'Rainy Window',
-    url: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=1920',
+    url: 'https://w.wallhaven.cc/full/x8/wallhaven-x8pr7z.jpg',
     type: 'image' as const,
+    category: 'indoor',
   },
   {
-    name: 'Mountain Lake',
-    url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920',
+    name: 'Night City',
+    url: 'https://w.wallhaven.cc/full/4x/wallhaven-4xpv9l.jpg',
     type: 'image' as const,
+    category: 'outdoor',
   },
   {
-    name: 'Forest Path',
-    url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920',
+    name: 'Study Room',
+    url: 'https://w.wallhaven.cc/full/we/wallhaven-weqpw8.png',
     type: 'image' as const,
+    category: 'indoor',
   },
   {
-    name: 'Ocean Sunset',
-    url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920',
+    name: 'Autumn Garden',
+    url: 'https://w.wallhaven.cc/full/rr/wallhaven-rrm99q.jpg',
     type: 'image' as const,
+    category: 'outdoor',
+  },
+  {
+    name: 'Coffee Shop',
+    url: 'https://w.wallhaven.cc/full/o5/wallhaven-o5lmep.jpg',
+    type: 'image' as const,
+    category: 'indoor',
+  },
+  {
+    name: 'Train Journey',
+    url: 'https://w.wallhaven.cc/full/4g/wallhaven-4gpj93.png',
+    type: 'image' as const,
+    category: 'travel',
   },
 ];
 

@@ -5,12 +5,11 @@ import { DEFAULT_SETTINGS } from './types';
 import {
   Background,
   BackgroundSettings,
-  Clock,
   FocusTimer,
-  Sidebar,
   MusicPlayer,
   AmbientSounds,
   TaskList,
+  BottomToolbar,
 } from './components';
 import type { PanelType } from './components';
 import './index.css';
@@ -42,84 +41,83 @@ function App() {
     setSettings((prev) => ({ ...prev, tasks }));
   };
 
-  const toggleSidebarCollapse = () => {
-    setSettings((prev) => ({ ...prev, sidebarCollapsed: !prev.sidebarCollapsed }));
+  const closePanel = () => setActivePanel(null);
+
+  const toggleMusicPlaying = () => {
+    setSettings((prev) => ({
+      ...prev,
+      music: { ...prev.music, isPlaying: !prev.music.isPlaying },
+    }));
   };
 
-  const closePanel = () => setActivePanel(null);
+  const activeSoundsCount = settings.ambientSounds.filter((s) => s.isActive).length;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background */}
+      {/* Background - fullscreen immersive */}
       <Background settings={settings.background} />
 
-      {/* Sidebar */}
-      <Sidebar
-        activePanel={activePanel}
-        onPanelChange={setActivePanel}
-        isCollapsed={settings.sidebarCollapsed}
-        onToggleCollapse={toggleSidebarCollapse}
-      />
-
-      {/* Panel content - appears next to sidebar */}
+      {/* Panel content - appears from right side */}
       {activePanel && (
-        <div className="fixed left-16 top-0 h-full flex items-center z-30 p-4">
-          {activePanel === 'music' && (
-            <MusicPlayer
-              settings={settings.music}
-              onSettingsChange={updateMusic}
-              onClose={closePanel}
-            />
-          )}
-          {activePanel === 'sounds' && (
-            <AmbientSounds
-              sounds={settings.ambientSounds}
-              onSoundsChange={updateAmbientSounds}
-              onClose={closePanel}
-            />
-          )}
-          {activePanel === 'timer' && (
-            <FocusTimer
-              settings={settings.timer}
-              onSettingsChange={updateTimer}
-              onClose={closePanel}
-            />
-          )}
-          {activePanel === 'tasks' && (
-            <TaskList
-              tasks={settings.tasks}
-              onTasksChange={updateTasks}
-              onClose={closePanel}
-            />
-          )}
-          {activePanel === 'background' && (
-            <BackgroundSettings
-              settings={settings.background}
-              onSettingsChange={updateBackground}
-              onClose={closePanel}
-            />
-          )}
-        </div>
+        <>
+          {/* Backdrop to close panel */}
+          <div
+            className="fixed inset-0 z-30"
+            onClick={closePanel}
+          />
+          {/* Panel */}
+          <div className="fixed right-4 top-4 z-40 animate-slide-in">
+            {activePanel === 'music' && (
+              <MusicPlayer
+                settings={settings.music}
+                onSettingsChange={updateMusic}
+                onClose={closePanel}
+              />
+            )}
+            {activePanel === 'sounds' && (
+              <AmbientSounds
+                sounds={settings.ambientSounds}
+                onSoundsChange={updateAmbientSounds}
+                onClose={closePanel}
+              />
+            )}
+            {activePanel === 'timer' && (
+              <FocusTimer
+                settings={settings.timer}
+                onSettingsChange={updateTimer}
+                onClose={closePanel}
+              />
+            )}
+            {activePanel === 'tasks' && (
+              <TaskList
+                tasks={settings.tasks}
+                onTasksChange={updateTasks}
+                onClose={closePanel}
+              />
+            )}
+            {activePanel === 'background' && (
+              <BackgroundSettings
+                settings={settings.background}
+                onSettingsChange={updateBackground}
+                onClose={closePanel}
+              />
+            )}
+          </div>
+        </>
       )}
 
-      {/* Main content - center */}
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 ml-16">
-        {/* Clock */}
-        <div className="mb-8">
-          <Clock />
-        </div>
+      {/* Bottom Toolbar */}
+      <BottomToolbar
+        activePanel={activePanel}
+        onPanelChange={setActivePanel}
+        isMusicPlaying={settings.music.isPlaying}
+        onMusicToggle={toggleMusicPlaying}
+        activeSoundsCount={activeSoundsCount}
+      />
 
-        {/* Compact Timer */}
-        <FocusTimer
-          settings={settings.timer}
-          onSettingsChange={updateTimer}
-          compact
-        />
-      </div>
-
-      {/* Keyboard shortcut hint */}
-      <div className="fixed bottom-4 right-4 text-white/20 text-xs select-none">
-        Focus Workspace
+      {/* Branding - subtle watermark */}
+      <div className="fixed bottom-16 right-4 text-white/20 text-xs select-none pointer-events-none">
+        lofizen.co
       </div>
     </div>
   );

@@ -158,7 +158,7 @@ export function FocusTimer({ settings, onSettingsChange, onClose, compact = fals
 
   // Full panel version
   return (
-    <div className="glass rounded-2xl p-4 text-white w-80">
+    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-5 text-white w-80">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium flex items-center gap-2">

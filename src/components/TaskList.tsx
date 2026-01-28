@@ -68,7 +68,7 @@ export function TaskList({ tasks, onTasksChange, onClose }: TaskListProps) {
   const totalPomodoros = tasks.reduce((sum, t) => sum + t.pomodoros, 0);
 
   return (
-    <div className="glass rounded-2xl p-4 w-80 text-white max-h-[70vh] flex flex-col">
+    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-5 w-80 text-white max-h-[70vh] flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium flex items-center gap-2">

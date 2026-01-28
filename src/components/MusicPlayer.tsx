@@ -56,7 +56,7 @@ export function MusicPlayer({ settings, onSettingsChange, onClose }: MusicPlayer
   };
 
   return (
-    <div className="glass rounded-2xl p-4 w-80 text-white">
+    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-5 w-80 text-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium flex items-center gap-2">

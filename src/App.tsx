@@ -50,7 +50,9 @@ function App() {
     }));
   };
 
-  const activeSoundsCount = settings.ambientSounds.filter((s) => s.isActive).length;
+const activeSoundsCount =
+  (settings.ambientSounds || []).filter((s) => s.isActive).length;
+
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -110,7 +112,7 @@ function App() {
       <BottomToolbar
         activePanel={activePanel}
         onPanelChange={setActivePanel}
-        isMusicPlaying={settings.music.isPlaying}
+        isMusicPlaying={settings.music?.isPlaying ?? false}
         onMusicToggle={toggleMusicPlaying}
         activeSoundsCount={activeSoundsCount}
       />

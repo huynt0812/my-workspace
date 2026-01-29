@@ -5,7 +5,7 @@ import { DEFAULT_SETTINGS } from './types';
 import {
   Background,
   BackgroundSettings,
-  FocusTimer,
+  Timer,
   MusicPlayer,
   AmbientSounds,
   TaskList,
@@ -84,7 +84,7 @@ const activeSoundsCount =
               />
             )}
             {activePanel === 'timer' && (
-              <FocusTimer
+              <Timer
                 settings={settings.timer}
                 onSettingsChange={updateTimer}
                 onClose={closePanel}

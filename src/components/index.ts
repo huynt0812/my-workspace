@@ -1,7 +1,7 @@
 export { Background } from './Background';
 export { BackgroundSettings } from './BackgroundSettings';
 export { Clock } from './Clock';
-export { FocusTimer } from './FocusTimer';
+export { Timer } from './Timer';
 export { Notes } from './Notes';
 export { MusicPlayer } from './MusicPlayer';
 export { AmbientSounds } from './AmbientSounds';

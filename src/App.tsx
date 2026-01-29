@@ -10,8 +10,10 @@ import {
   AmbientSounds,
   TaskList,
   BottomToolbar,
+  UserPanel,
 } from './components';
 import type { PanelType } from './components';
+import { AuthProvider } from './contexts/AuthContext';
 import './index.css';
 
 function App() {
@@ -50,78 +52,83 @@ function App() {
     }));
   };
 
-const activeSoundsCount =
-  (settings.ambientSounds || []).filter((s) => s.isActive).length;
+  const activeSoundsCount =
+    (settings.ambientSounds || []).filter((s) => s.isActive).length;
 
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Background - fullscreen immersive */}
-      <Background settings={settings.background} />
+    <AuthProvider>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Background - fullscreen immersive */}
+        <Background settings={settings.background} />
 
-      {/* Panel content - appears from right side */}
-      {activePanel && (
-        <>
-          {/* Backdrop to close panel */}
-          <div
-            className="fixed inset-0 z-30"
-            onClick={closePanel}
-          />
-          {/* Panel */}
-          <div className="fixed right-4 top-4 z-40 animate-slide-in">
-            {activePanel === 'music' && (
-              <MusicPlayer
-                settings={settings.music}
-                onSettingsChange={updateMusic}
-                onClose={closePanel}
-              />
-            )}
-            {activePanel === 'sounds' && (
-              <AmbientSounds
-                sounds={settings.ambientSounds}
-                onSoundsChange={updateAmbientSounds}
-                onClose={closePanel}
-              />
-            )}
-            {activePanel === 'timer' && (
-              <Timer
-                settings={settings.timer}
-                onSettingsChange={updateTimer}
-                onClose={closePanel}
-              />
-            )}
-            {activePanel === 'tasks' && (
-              <TaskList
-                tasks={settings.tasks}
-                onTasksChange={updateTasks}
-                onClose={closePanel}
-              />
-            )}
-            {activePanel === 'background' && (
-              <BackgroundSettings
-                settings={settings.background}
-                onSettingsChange={updateBackground}
-                onClose={closePanel}
-              />
-            )}
-          </div>
-        </>
-      )}
+        {/* Panel content - appears from right side */}
+        {activePanel && (
+          <>
+            {/* Backdrop to close panel */}
+            <div
+              className="fixed inset-0 z-30"
+              onClick={closePanel}
+            />
+            {/* Panel */}
+            <div className="fixed right-4 top-4 z-40 animate-slide-in">
+              {activePanel === 'music' && (
+                <MusicPlayer
+                  settings={settings.music}
+                  onSettingsChange={updateMusic}
+                  onClose={closePanel}
+                />
+              )}
+              {activePanel === 'sounds' && (
+                <AmbientSounds
+                  sounds={settings.ambientSounds}
+                  onSoundsChange={updateAmbientSounds}
+                  onClose={closePanel}
+                />
+              )}
+              {activePanel === 'timer' && (
+                <Timer
+                  settings={settings.timer}
+                  onSettingsChange={updateTimer}
+                  onClose={closePanel}
+                />
+              )}
+              {activePanel === 'tasks' && (
+                <TaskList
+                  tasks={settings.tasks}
+                  onTasksChange={updateTasks}
+                  onClose={closePanel}
+                />
+              )}
+              {activePanel === 'background' && (
+                <BackgroundSettings
+                  settings={settings.background}
+                  onSettingsChange={updateBackground}
+                  onClose={closePanel}
+                />
+              )}
+              {activePanel === 'user' && (
+                <UserPanel onClose={closePanel} />
+              )}
+            </div>
+          </>
+        )}
 
-      {/* Bottom Toolbar */}
-      <BottomToolbar
-        activePanel={activePanel}
-        onPanelChange={setActivePanel}
-        isMusicPlaying={settings.music?.isPlaying ?? false}
-        onMusicToggle={toggleMusicPlaying}
-        activeSoundsCount={activeSoundsCount}
-      />
+        {/* Bottom Toolbar */}
+        <BottomToolbar
+          activePanel={activePanel}
+          onPanelChange={setActivePanel}
+          isMusicPlaying={settings.music?.isPlaying ?? false}
+          onMusicToggle={toggleMusicPlaying}
+          activeSoundsCount={activeSoundsCount}
+        />
 
-      {/* Branding - subtle watermark */}
-      <div className="fixed bottom-16 right-4 text-white/20 text-xs select-none pointer-events-none">
-        lofizen.co
+        {/* Branding - subtle watermark */}
+        <div className="fixed bottom-16 right-4 text-white/20 text-xs select-none pointer-events-none">
+          lofizen.co
+        </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }
 

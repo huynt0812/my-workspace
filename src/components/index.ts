@@ -8,3 +8,4 @@ export { AmbientSounds } from './AmbientSounds';
 export { TaskList } from './TaskList';
 export { BottomToolbar } from './BottomToolbar';
 export type { PanelType } from './BottomToolbar';
+export { UserPanel } from './UserPanel';

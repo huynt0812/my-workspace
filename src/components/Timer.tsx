@@ -1,23 +1,31 @@
 import { useState, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Clock } from 'lucide-react';
+import { Play, Pause, RotateCcw, Clock, X } from 'lucide-react';
+import type { TimerSettings } from '../types';
 
-type TimerMode = 'pomodoro' | 'shortBreak' | 'longBreak';
+interface TimerProps {
+  settings: TimerSettings;
+  onSettingsChange: (settings: TimerSettings) => void;
+  onClose: () => void;
+}
 
-const timerPresets = {
-  pomodoro: 25 * 60,
-  shortBreak: 5 * 60,
-  longBreak: 15 * 60,
-};
+export function Timer({ settings, onClose }: TimerProps) {
+  const [mode, setMode] = useState<'pomodoro' | 'shortBreak' | 'longBreak'>('pomodoro');
 
-export function Timer() {
-  const [mode, setMode] = useState<TimerMode>('pomodoro');
+  // Use settings for durations if available, otherwise fallback to defaults
+  const timerPresets = {
+    pomodoro: (settings?.focusDuration || 25) * 60,
+    shortBreak: (settings?.breakDuration || 5) * 60,
+    longBreak: 15 * 60, // Fixed default for long break as it's not in settings
+  };
+
   const [timeLeft, setTimeLeft] = useState(timerPresets.pomodoro);
   const [isRunning, setIsRunning] = useState(false);
 
+  // Update timer when mode or settings change
   useEffect(() => {
     setTimeLeft(timerPresets[mode]);
     setIsRunning(false);
-  }, [mode]);
+  }, [mode, settings.focusDuration, settings.breakDuration]);
 
   useEffect(() => {
     if (!isRunning || timeLeft <= 0) return;
@@ -26,6 +34,7 @@ export function Timer() {
       setTimeLeft(prev => {
         if (prev <= 1) {
           setIsRunning(false);
+          // Here we could handle session completion, updating stats in settings
           return 0;
         }
         return prev - 1;
@@ -49,55 +58,64 @@ export function Timer() {
   const progress = ((timerPresets[mode] - timeLeft) / timerPresets[mode]) * 100;
 
   return (
-    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 sticky top-24">
+    <div className="bg-gray-800/80 backdrop-blur-md rounded-2xl p-6 border border-gray-700/50 w-80 shadow-xl">
       <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Clock className="w-6 h-6 text-blue-400" />
-          <h3 className="text-xl font-semibold">Focus Timer</h3>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-blue-400" />
+            <h3 className="font-semibold text-gray-100">Focus Timer</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        <div className="flex gap-2">
-          {(Object.keys(timerPresets) as TimerMode[]).map((m) => (
+        <div className="flex bg-gray-700/50 rounded-lg p-1">
+          {(['pomodoro', 'shortBreak', 'longBreak'] as const).map((m) => (
             <button
               key={m}
               onClick={() => setMode(m)}
-              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                mode === m
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
-              }`}
+              className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${mode === m
+                ? 'bg-blue-500 text-white shadow-sm'
+                : 'text-gray-400 hover:text-gray-200'
+                }`}
             >
-              {m === 'pomodoro' ? 'Pomodoro' : m === 'shortBreak' ? 'Short Break' : 'Long Break'}
+              {m === 'pomodoro' ? 'Focus' : m === 'shortBreak' ? 'Short' : 'Long'}
             </button>
           ))}
         </div>
 
-        <div className="relative">
+        <div className="relative mx-auto w-48">
           <div className="aspect-square flex items-center justify-center">
             <svg className="w-full h-full -rotate-90">
               <circle
                 cx="50%"
                 cy="50%"
                 r="45%"
-                className="fill-none stroke-gray-700"
-                strokeWidth="8"
+                className="fill-none stroke-gray-700/50"
+                strokeWidth="6"
               />
               <circle
                 cx="50%"
                 cy="50%"
                 r="45%"
-                className="fill-none stroke-blue-500 transition-all duration-1000"
-                strokeWidth="8"
-                strokeDasharray={`${2 * Math.PI * 45}`}
-                strokeDashoffset={`${2 * Math.PI * 45 * (1 - progress / 100)}`}
+                className="fill-none stroke-blue-500 transition-all duration-1000 ease-linear"
+                strokeWidth="6"
+                strokeDasharray={`${2 * Math.PI * 45}%`}
+                strokeDashoffset={`${2 * Math.PI * 45 * (1 - progress / 100)}%`}
                 strokeLinecap="round"
               />
             </svg>
 
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-5xl font-bold">{formatTime(timeLeft)}</div>
-                <div className="text-sm text-gray-400 mt-2 capitalize">{mode.replace(/([A-Z])/g, ' $1')}</div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="text-4xl font-bold font-mono tracking-wider text-white">
+                {formatTime(timeLeft)}
+              </div>
+              <div className="text-xs text-blue-400 mt-1 font-medium tracking-wide uppercase">
+                {mode === 'pomodoro' ? 'Focus Time' : 'Break Time'}
               </div>
             </div>
           </div>
@@ -106,16 +124,19 @@ export function Timer() {
         <div className="flex gap-3">
           <button
             onClick={() => setIsRunning(!isRunning)}
-            className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl font-medium hover:scale-105 transition-transform flex items-center justify-center gap-2"
+            className={`flex-1 py-3 rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-lg ${isRunning
+              ? 'bg-amber-500/20 text-amber-500 hover:bg-amber-500/30'
+              : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
           >
             {isRunning ? (
               <>
                 <Pause className="w-5 h-5" />
-                Pause
+                Wait
               </>
             ) : (
               <>
-                <Play className="w-5 h-5" />
+                <Play className="w-5 h-5 fill-current" />
                 Start
               </>
             )}
@@ -123,7 +144,7 @@ export function Timer() {
 
           <button
             onClick={resetTimer}
-            className="p-3 bg-gray-700 rounded-xl hover:bg-gray-600 transition-colors"
+            className="p-3 bg-gray-700/50 text-gray-300 rounded-xl hover:bg-gray-700 hover:text-white transition-colors"
           >
             <RotateCcw className="w-5 h-5" />
           </button>
